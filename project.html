@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SprintBoard</title>
+</head>
+
+<body>
+
+<h1>SprintBoard</h1>
+
+<a href="dashboard.html">← Dashboard</a>
+
+<hr>
+
+<h2>Create Task</h2>
+
+<input
+id="taskTitle"
+placeholder="Task Title">
+
+<br><br>
+
+<textarea
+id="taskDescription"
+placeholder="Task Description"></textarea>
+
+<br><br>
+
+<select id="taskStatus">
+
+<option value="Todo">Todo</option>
+
+<option value="In Progress">In Progress</option>
+
+<option value="Done">Done</option>
+
+</select>
+
+<br><br>
+
+<button id="createTaskBtn">
+
+Create Task
+
+</button>
+
+<hr>
+
+<div style="display:flex;gap:20px;align-items:flex-start">
+
+<div style="flex:1">
+
+<h2>Todo</h2>
+
+<div id="todo"></div>
+
+</div>
+
+<div style="flex:1">
+
+<h2>In Progress</h2>
+
+<div id="progress"></div>
+
+</div>
+
+<div style="flex:1">
+
+<h2>Done</h2>
+
+<div id="done"></div>
+
+</div>
+
+</div>
+<!-- Task Modal -->
+
+<div id="taskModal"
+style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+">
+
+<div
+style="
+background:white;
+width:500px;
+margin:50px auto;
+padding:20px;
+border-radius:8px;
+">
+
+<h2>Edit Task</h2>
+
+<input
+id="editTitle"
+placeholder="Task Title">
+
+<br><br>
+
+<textarea
+id="editDescription"
+placeholder="Description"></textarea>
+
+<br><br>
+
+<select id="editStatus">
+
+<option>Todo</option>
+<option>In Progress</option>
+<option>Done</option>
+
+</select>
+
+<br><br>
+<label>Assign To</label>
+
+<input
+id="assignedTo"
+placeholder="Member Email">
+<button id="saveTaskBtn">
+Save
+</button>
+
+<button id="deleteTaskBtn">
+Delete
+</button>
+
+<button id="closeModalBtn">
+Close
+</button>
+
+<hr>
+
+<h3>Comments</h3>
+
+<div id="commentList"></div>
+
+<input
+id="commentInput"
+placeholder="Write comment">
+
+<button id="addCommentBtn">
+
+Add Comment
+
+</button>
+
+</div>
+
+</div>
+<script type="module" src="js/project.js"></script>
+
+</body>
+
+</html>
