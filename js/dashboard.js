@@ -75,46 +75,46 @@ createBtn.addEventListener("click", async()=>{
 
 });
 
-async function loadProjects(){
+async function loadProjects() {
 
-    projectList.innerHTML="";
+    projectList.innerHTML = "";
 
-    const q=query(
-        collection(db,"projects"),
-        where("owner","==",currentUser.uid)
+    const q = query(
+        collection(db, "projects"),
+        where("owner", "==", currentUser.uid)
     );
 
-    const snapshot=await getDocs(q);
+    const snapshot = await getDocs(q);
 
-    snapshot.forEach((doc) => {
+    snapshot.forEach((projectDoc) => {
 
-    const project = doc.data();
+        const project = projectDoc.data();
 
-    projectList.innerHTML += `
-<div style="border:1px solid #ccc;padding:15px;margin:15px;border-radius:8px">
+        projectList.innerHTML += `
+        <div class="project-card">
 
-    <h3>${project.name}</h3>
+            <h3>${project.name}</h3>
 
-    <p>${project.description}</p>
+            <p>${project.description}</p>
 
-    <button onclick="openProject('${doc.id}')">
-        Open Board
-    </button>
+            <button onclick="openProject('${projectDoc.id}')">
+                Open Board
+            </button>
 
-    <br><br>
+            <br><br>
 
-    <input
-        id="member-${doc.id}"
-        placeholder="Member Email">
+            <input
+                id="member-${projectDoc.id}"
+                placeholder="Member Email">
 
-    <button onclick="addMember('${doc.id}')">
-        Add Member
-    </button>
+            <button onclick="addMember('${projectDoc.id}')">
+                Add Member
+            </button>
 
-</div>
-`;
+        </div>
+        `;
 
-});
+    });
 
 }
 window.openProject = function (projectId) {
@@ -126,19 +126,23 @@ window.openProject = function (projectId) {
 };
 window.addMember = async function(projectId){
 
-    const email = document.getElementById(`member-${projectId}`).value;
+    const email = document.getElementById(`member-${projectId}`).value.trim();
 
-    if(email===""){
+    if(email === ""){
         alert("Enter member email");
         return;
     }
 
+    if(!email.includes("@")){
+        alert("Enter a valid email");
+        return;
+    }
+
     await updateDoc(doc(db,"projects",projectId),{
-
         members: arrayUnion(email)
-
     });
 
     alert("Member Added!");
 
+    document.getElementById(`member-${projectId}`).value = "";
 }

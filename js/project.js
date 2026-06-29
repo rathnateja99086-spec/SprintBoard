@@ -8,172 +8,197 @@ import {
     onSnapshot,
     doc,
     getDoc,
+    getDocs,
     updateDoc,
     deleteDoc,
     orderBy
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
 import {
     getAuth
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
 const auth = getAuth();
+
 const projectId = localStorage.getItem("currentProject");
+
 let selectedTaskId = null;
+
 const todo = document.getElementById("todo");
 const progress = document.getElementById("progress");
 const done = document.getElementById("done");
 
 document
-.getElementById("createTaskBtn")
-.addEventListener("click", createTask);
+    .getElementById("createTaskBtn")
+    .addEventListener("click", createTask);
 
-async function createTask(){
+// ---------------- CREATE TASK ----------------
 
-    const title=document.getElementById("taskTitle").value;
-    const description=document.getElementById("taskDescription").value;
-    const status=document.getElementById("taskStatus").value;
+async function createTask() {
 
-    if(title===""){
+    const title = document.getElementById("taskTitle").value.trim();
+    const description = document.getElementById("taskDescription").value.trim();
+    const status = document.getElementById("taskStatus").value;
 
+    if (title === "") {
         alert("Enter task title");
-
         return;
-
     }
 
-    await addDoc(collection(db,"tasks"),{
+    await addDoc(collection(db, "tasks"), {
 
         projectId,
-
         title,
-
         description,
-
         status,
-
-        createdAt:Date.now()
+        assignedTo: "",
+        createdAt: Date.now()
 
     });
 
+    // Clear form
+    document.getElementById("taskTitle").value = "";
+    document.getElementById("taskDescription").value = "";
+    document.getElementById("taskStatus").value = "Todo";
+
 }
 
-const q=query(
+// ---------------- LOAD TASKS ----------------
 
-collection(db,"tasks"),
-
-where("projectId","==",projectId)
-
+const q = query(
+    collection(db, "tasks"),
+    where("projectId", "==", projectId)
 );
 
-onSnapshot(q,(snapshot)=>{
+onSnapshot(q, (snapshot) => {
 
-todo.innerHTML="";
-progress.innerHTML="";
-done.innerHTML="";
+    todo.innerHTML = "";
+    progress.innerHTML = "";
+    done.innerHTML = "";
 
-snapshot.forEach((doc)=>{
+    snapshot.forEach((taskDoc) => {
 
-const task=doc.data();
+        const task = taskDoc.data();
 
-const card = `
+        const card = `
+        <div class="task-card" onclick="openTask('${taskDoc.id}')">
 
-<div
-onclick="openTask('${doc.id}')"
-style="
-border:1px solid #ccc;
-padding:12px;
-margin-bottom:10px;
-cursor:pointer;
-border-radius:8px;
-background:#f8f9fa;
-">
+            <h3>${task.title}</h3>
 
-<h3>${task.title}</h3>
+            <p>${task.description}</p>
 
-<p>${task.description}</p>
+            <p><strong>Status:</strong> ${task.status}</p>
 
-<p><b>Status:</b> ${task.status}</p>
+            <p><strong>Assigned:</strong> ${task.assignedTo || "Unassigned"}</p>
 
-<p><b>Assigned To:</b> ${task.assignedTo || "Unassigned"}</p>
+        </div>
+        `;
 
-</div>
+        if (task.status === "Todo") {
 
-`;
+            todo.innerHTML += card;
 
-if(task.status==="Todo"){
+        } else if (task.status === "In Progress") {
 
-todo.innerHTML+=card;
+            progress.innerHTML += card;
 
-}
+        } else {
 
-else if(task.status==="In Progress"){
+            done.innerHTML += card;
 
-progress.innerHTML+=card;
+        }
 
-}
-
-else{
-
-done.innerHTML+=card;
-
-}
+    });
 
 });
 
-});
-window.openTask = async function(taskId){
+// ---------------- OPEN TASK ----------------
+
+window.openTask = async function (taskId) {
+
     selectedTaskId = taskId;
-    const modal = document.getElementById("taskModal");
 
-    modal.style.display = "block";
+    document.getElementById("taskModal").style.display = "block";
 
-    const taskRef = doc(db,"tasks",taskId);
-
-    const taskSnap = await getDoc(taskRef);
+    const taskSnap = await getDoc(doc(db, "tasks", taskId));
 
     const task = taskSnap.data();
 
     document.getElementById("editTitle").value = task.title;
-
     document.getElementById("editDescription").value = task.description;
-
     document.getElementById("editStatus").value = task.status;
-    document.getElementById("assignedTo").value =
-task.assignedTo || "";
+
+    // ---------- Load Members ----------
+
+    const assignSelect = document.getElementById("assignedTo");
+
+    assignSelect.innerHTML = `<option value="">Unassigned</option>`;
+
+    const projectSnap = await getDoc(doc(db, "projects", projectId));
+
+    const projectData = projectSnap.data();
+
+    const members = projectData.members || [];
+
+    members.forEach(member => {
+
+        assignSelect.innerHTML += `
+            <option value="${member}">
+                ${member}
+            </option>
+        `;
+
+    });
+
+    assignSelect.value = task.assignedTo || "";
+
+    // ---------- Load Comments ----------
+
     const commentList = document.getElementById("commentList");
-
-const commentsQuery = query(
-    collection(db, "comments"),
-    where("taskId", "==", taskId),
-    orderBy("createdAt")
-);
-
-onSnapshot(commentsQuery, (snapshot) => {
 
     commentList.innerHTML = "";
 
-    snapshot.forEach((doc) => {
+    const commentsQuery = query(
+        collection(db, "comments"),
+        where("taskId", "==", taskId),
+        orderBy("createdAt")
+    );
 
-        const comment = doc.data();
+    const commentsSnapshot = await getDocs(commentsQuery);
+
+    commentsSnapshot.forEach((commentDoc) => {
+
+        const comment = commentDoc.data();
 
         commentList.innerHTML += `
-            <div style="margin-bottom:10px;padding:8px;border-bottom:1px solid #ddd;">
-                <strong>${comment.userEmail}</strong><br>
-                ${comment.text}
+            <div class="comment">
+
+                <strong>${comment.userEmail}</strong>
+
+                <p>${comment.text}</p>
+
             </div>
         `;
 
     });
 
-});
 }
+
+// ---------------- CLOSE MODAL ----------------
+
 document
 .getElementById("closeModalBtn")
-.addEventListener("click",()=>{
+.addEventListener("click", () => {
 
-document.getElementById("taskModal").style.display="none";
+    document.getElementById("taskModal").style.display = "none";
 
 });
-document.getElementById("saveTaskBtn").addEventListener("click", async () => {
+
+// ---------------- SAVE TASK ----------------
+
+document
+.getElementById("saveTaskBtn")
+.addEventListener("click", async () => {
 
     await updateDoc(doc(db, "tasks", selectedTaskId), {
 
@@ -182,45 +207,63 @@ document.getElementById("saveTaskBtn").addEventListener("click", async () => {
         description: document.getElementById("editDescription").value,
 
         status: document.getElementById("editStatus").value,
-        assignedTo:document.getElementById("assignedTo").value
-    });
 
-    alert("Task Updated!");
+        assignedTo: document.getElementById("assignedTo").value
+
+    });
 
     document.getElementById("taskModal").style.display = "none";
 
 });
-document.getElementById("deleteTaskBtn").addEventListener("click", async () => {
 
-    const confirmDelete = confirm("Are you sure you want to delete this task?");
+// ---------------- DELETE TASK ----------------
+
+document
+.getElementById("deleteTaskBtn")
+.addEventListener("click", async () => {
+
+    const confirmDelete = confirm("Delete this task?");
 
     if (!confirmDelete) return;
 
     await deleteDoc(doc(db, "tasks", selectedTaskId));
 
-    alert("Task Deleted!");
-
     document.getElementById("taskModal").style.display = "none";
 
 });
-document.getElementById("addCommentBtn").addEventListener("click", async () => {
+
+// ---------------- ADD COMMENT ----------------
+
+document
+.getElementById("addCommentBtn")
+.addEventListener("click", async () => {
 
     const text = document.getElementById("commentInput").value.trim();
 
     if (text === "") {
+
         alert("Enter a comment");
+
         return;
+
     }
 
     await addDoc(collection(db, "comments"), {
 
         taskId: selectedTaskId,
+
         userEmail: auth.currentUser.email,
-        text: text,
+
+        text,
+
         createdAt: Date.now()
 
     });
 
     document.getElementById("commentInput").value = "";
+
+    // Refresh comments immediately
+
+    window.openTask(selectedTaskId);
 
 });

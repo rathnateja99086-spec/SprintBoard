@@ -3,160 +3,163 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SprintBoard</title>
+
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<h1>SprintBoard</h1>
+    <!-- Navbar -->
+    <header class="navbar">
 
-<a href="dashboard.html">← Dashboard</a>
+        <h1>🚀 SprintBoard</h1>
 
-<hr>
+        <a href="dashboard.html" class="back-btn">
+            ← Dashboard
+        </a>
 
-<h2>Create Task</h2>
+    </header>
 
-<input
-id="taskTitle"
-placeholder="Task Title">
+    <div class="container">
 
-<br><br>
+        <!-- Create Task -->
 
-<textarea
-id="taskDescription"
-placeholder="Task Description"></textarea>
+        <section class="create-project">
 
-<br><br>
+            <h2>Create New Task</h2>
 
-<select id="taskStatus">
+            <input
+                id="taskTitle"
+                placeholder="Task Title">
 
-<option value="Todo">Todo</option>
+            <textarea
+                id="taskDescription"
+                placeholder="Task Description"></textarea>
 
-<option value="In Progress">In Progress</option>
+            <select id="taskStatus">
 
-<option value="Done">Done</option>
+                <option value="Todo">Todo</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Done">Done</option>
 
-</select>
+            </select>
 
-<br><br>
+            <button id="createTaskBtn">
 
-<button id="createTaskBtn">
+                + Create Task
 
-Create Task
+            </button>
 
-</button>
+        </section>
 
-<hr>
+        <!-- Kanban Board -->
 
-<div style="display:flex;gap:20px;align-items:flex-start">
+        <section class="board">
 
-<div style="flex:1">
+            <div class="column">
 
-<h2>Todo</h2>
+                <h2>📋 Todo</h2>
 
-<div id="todo"></div>
+                <div id="todo"></div>
 
-</div>
+            </div>
 
-<div style="flex:1">
+            <div class="column">
 
-<h2>In Progress</h2>
+                <h2>🚧 In Progress</h2>
 
-<div id="progress"></div>
+                <div id="progress"></div>
 
-</div>
+            </div>
 
-<div style="flex:1">
+            <div class="column">
 
-<h2>Done</h2>
+                <h2>✅ Done</h2>
 
-<div id="done"></div>
+                <div id="done"></div>
 
-</div>
+            </div>
 
-</div>
-<!-- Task Modal -->
+        </section>
 
-<div id="taskModal"
-style="
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.5);
-">
+    </div>
 
-<div
-style="
-background:white;
-width:500px;
-margin:50px auto;
-padding:20px;
-border-radius:8px;
-">
+    <!-- Modal -->
 
-<h2>Edit Task</h2>
+    <div id="taskModal" class="modal">
 
-<input
-id="editTitle"
-placeholder="Task Title">
+        <div class="modal-content">
 
-<br><br>
+            <h2>Edit Task</h2>
 
-<textarea
-id="editDescription"
-placeholder="Description"></textarea>
+            <input
+                id="editTitle"
+                placeholder="Task Title">
 
-<br><br>
+            <textarea
+                id="editDescription"
+                placeholder="Task Description"></textarea>
 
-<select id="editStatus">
+            <select id="editStatus">
 
-<option>Todo</option>
-<option>In Progress</option>
-<option>Done</option>
+                <option>Todo</option>
+                <option>In Progress</option>
+                <option>Done</option>
 
-</select>
+            </select>
 
-<br><br>
-<label>Assign To</label>
+            <label>Assign To</label>
 
-<input
-id="assignedTo"
-placeholder="Member Email">
-<button id="saveTaskBtn">
-Save
-</button>
+            <select id="assignedTo">
 
-<button id="deleteTaskBtn">
-Delete
-</button>
+                <option value="">Unassigned</option>
 
-<button id="closeModalBtn">
-Close
-</button>
+            </select>
+            <div class="modal-buttons">
 
-<hr>
+                <button id="saveTaskBtn">
 
-<h3>Comments</h3>
+                    💾 Save
 
-<div id="commentList"></div>
+                </button>
 
-<input
-id="commentInput"
-placeholder="Write comment">
+                <button id="deleteTaskBtn">
 
-<button id="addCommentBtn">
+                    🗑 Delete
 
-Add Comment
+                </button>
 
-</button>
+                <button id="closeModalBtn">
 
-</div>
+                    ❌ Close
 
-</div>
-<script type="module" src="js/project.js"></script>
+                </button>
+
+            </div>
+
+            <hr>
+
+            <h3>💬 Comments</h3>
+
+            <div id="commentList" class="comment-list"></div>
+
+            <input
+                id="commentInput"
+                placeholder="Write a comment...">
+
+            <button id="addCommentBtn">
+
+                Add Comment
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <script type="module" src="js/project.js"></script>
 
 </body>
 

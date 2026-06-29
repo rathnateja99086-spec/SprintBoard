@@ -4,37 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SprintBoard Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-    <h1>SprintBoard</h1>
+<header class="navbar">
 
-    <button id="logoutBtn">Logout</button>
+    <div class="logo">
+        <h1>🚀 SprintBoard</h1>
+    </div>
 
-    <hr>
-
-    <h2>Create Project</h2>
-
-    <input
-        type="text"
-        id="projectName"
-        placeholder="Project Name">
-
-    <textarea
-        id="projectDescription"
-        placeholder="Project Description"></textarea>
-
-    <button id="createProjectBtn">
-        Create Project
+    <button id="logoutBtn" class="logout-btn">
+        Logout
     </button>
 
-    <hr>
+</header>
 
-    <h2>My Projects</h2>
+<div class="container">
 
-    <div id="projectList"></div>
+    <!-- Create Project Section -->
 
-    <script type="module" src="js/dashboard.js"></script>
+    <section class="create-project">
+
+        <h2>Create New Project</h2>
+
+        <input
+            type="text"
+            id="projectName"
+            placeholder="Project Name">
+
+        <textarea
+            id="projectDescription"
+            placeholder="Project Description"></textarea>
+
+        <button id="createProjectBtn">
+            + Create Project
+        </button>
+
+    </section>
+
+    <!-- Project List -->
+
+    <section class="projects">
+
+        <h2>My Projects</h2>
+
+        <div id="projectList" class="project-grid">
+
+            <!-- Projects will load here -->
+
+        </div>
+
+    </section>
+
+</div>
+
+<script type="module" src="js/dashboard.js"></script>
 
 </body>
 </html>
